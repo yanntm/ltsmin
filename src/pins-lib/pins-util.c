@@ -119,6 +119,26 @@ pins_add_state_label_visible (model_t model, int index)
     int                *visible = GBgetPorStateLabelVisibility(model);
     HREassert (visible != NULL, "pins_add_state_label_visible: No (lower) PINS layer uses POR visibility.");
     visible[index] = 1;
+    // propagate to groups using NES/NDS
+    visible = GBgetPorGroupVisibility(model);
+    matrix_t           *wr_info = GBgetGuardNESInfo(model);
+    if (wr_info) {
+    	int ngroups = dm_nrows (wr_info);
+    	for (int i = 0; i < ngroups; i++) {
+    		if (dm_is_set(wr_info, i, index)) {
+    			visible[i] = 1;
+    		}
+    	}
+    }
+    wr_info = GBgetGuardNDSInfo(model);
+    if (wr_info) {
+    	int ngroups = dm_nrows (wr_info);
+    	for (int i = 0; i < ngroups; i++) {
+    		if (dm_is_set(wr_info, i, index)) {
+    			visible[i] = 1;
+    		}
+    	}
+    }
 }
 
 int
